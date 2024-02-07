@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
+import * as Firework from '/firework.js';
 
 const ratio = 4096/2907;
 const scale = 4;
@@ -19,7 +20,9 @@ const pointer = new THREE.Vector2();
 const geometryCube = new THREE.BoxGeometry( 1, 1, 1 );
 const materialCube = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 const cube = new THREE.Mesh( geometryCube, materialCube );
-var clock = new THREE.Clock();
+const clock = new THREE.Clock();
+
+const fireworks = [];
 
 const ambientLight = new THREE.AmbientLight( 0xffffff, 1.5 );
 scene.add( ambientLight );
@@ -29,6 +32,9 @@ scene.add( light1 );
 
 const light2 = new THREE.DirectionalLight( 0xffffff, 50 );
 scene.add( light2 );
+
+let particleTexture = new THREE.TextureLoader().load( "particle.png" );
+let particleMaterial = new THREE.SpriteMaterial( { map: particleTexture } );
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
 const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
@@ -59,7 +65,8 @@ const cardMaterial = new THREE.MeshStandardMaterial( {
     color: 0xffffff, 
     side: THREE.DoubleSide,
     bumpMap: packetBump,
-    metalnessMap: packetMetal,
+    metalness: 0,
+    roughness: 1,
 });
 
 const envelope = new THREE.Mesh( geometryPlane, packetMaterial );
@@ -77,13 +84,44 @@ function animate() {
     var yPos = scale * (Math.cos(2 * clock.getElapsedTime()));
     light1.position.set(xPos, yPos, 0.05);
     light2.position.set(-xPos, -yPos, 0.05);
+
+    for (let i = 0; i < fireworks.length; i++) {
+        let firework = fireworks[i];
+        let deltaTime = 0.05;
+        firework.render(deltaTime);
+    
+    }
+    
 	renderer.render( scene, camera );
 }
 
-var isAnimating = false;
+var isAnimatingEnvelope = false;
+var isAnimatingCard = false;
+
 var isOut = false;
 
+function createFirework () {
+
+    fireworks.push(new Firework.Firework (
+        new THREE.Vector3(0, 1.5 *  scale, -5), 
+        scene, 
+        particleMaterial
+    ));
+    
+}
+
 function onTapCard (event) {
+    if (isOut) {
+        let d = 0.1;
+        gsap.to(card.position, {z: 0, duration: d, ease: "power1.out"});
+        gsap.to(card.position, {z: -0.3, duration: d, ease: "power1.in", delay: d });
+        createFirework();
+    }
+    
+    
+}
+
+function onTapEnvelope (event) {
     if (isOut) {
         moveIn();
     }
@@ -94,8 +132,8 @@ function onTapCard (event) {
 }
 
 function moveIn(){
-    if (isAnimating) return;
-    isAnimating = true;
+    if (isAnimatingEnvelope) return;
+    isAnimatingEnvelope = true;
     gsap.to(envelope.position, {z: 0, duration: 0.1});
     gsap.to(card.position, {
         y: 0,
@@ -108,38 +146,38 @@ function moveIn(){
         duration: 0.5, 
         onComplete: () => {
             isOut = false;
-            isAnimating = false
+            isAnimatingEnvelope = false
         }
     });
 }
 
 function moveOut() {
-    if (isAnimating) return;
-    isAnimating = true;
-    gsap.to(envelope.position, {z: 0.5, duration: 0.2});
+    if (isAnimatingEnvelope) return;
+    isAnimatingEnvelope = true;
+    gsap.to(envelope.position, {z: 0.2, duration: 0.2});
     envelope.position.set(0, 0, 0);
     gsap.to(card.position, {
-        y: scale/4,
+        y: scale * 1/ 8,
         delay: 0.2,
         duration: 1,
     })
     gsap.to(envelope.position, {
-        y: -scale/2, 
+        y: -scale * 6/8, 
         delay: 0.2,
         duration: 1, 
         // ease: "power1.in", 
         onComplete: () => {
             isOut = true;
-            isAnimating = false
+            isAnimatingEnvelope = false
         }
     });
 }
 
 function onPointerDown( event ) {
-
+    
 	// calculate pointer position in normalized device coordinates
 	// (-1 to +1) for both components
-
+    // createFirework();
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
@@ -148,7 +186,12 @@ function onPointerDown( event ) {
 
     for ( let i = 0; i < intersects.length; i ++ ) {
         if (intersects[ i ].object === envelope) {
+            onTapEnvelope();
+            break;
+        }
+        if (intersects[ i ].object === card) {
             onTapCard();
+            break;
         }
 	}
 
