@@ -6,7 +6,7 @@ export class Physics {
         this.acceleration = new THREE.Vector3();
         this.position = position;
         this.velocity = velocity;
-        this.mass = mass;
+        this.mass = mass; //not used
 
     }
 
