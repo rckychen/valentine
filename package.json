@@ -5,5 +5,11 @@
   },
   "devDependencies": {
     "vite": "^5.0.12"
+  },
+  "scripts": {
+      "build": "vite build",
+      "preview": "vite preview"
   }
+  
 }
+

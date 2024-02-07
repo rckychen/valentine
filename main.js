@@ -11,7 +11,6 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 document.body.addEventListener('pointerdown', (event) => {
     onPointerDown(event);
-    // onTap(event);
 });
 
 const raycaster = new THREE.Raycaster();
@@ -32,19 +31,19 @@ const light2 = new THREE.DirectionalLight( 0xffffff, 50 );
 scene.add( light2 );
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
-const packetDiffuse = new THREE.TextureLoader().load( "public/old/diffuse.jpg" );
+const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
 packetDiffuse.wrapS = THREE.RepeatWrapping;
 packetDiffuse.wrapT = THREE.RepeatWrapping;
 
-const packetBump = new THREE.TextureLoader().load( "public/old/bump.jpeg" );
+const packetBump = new THREE.TextureLoader().load( "old/bump.jpeg" );
 packetBump.wrapS = THREE.RepeatWrapping;
 packetBump.wrapT = THREE.RepeatWrapping;
 
-const packetMetal = new THREE.TextureLoader().load( "public/old/metallic.jpg" );
+const packetMetal = new THREE.TextureLoader().load( "old/metallic.jpg" );
 packetMetal.wrapS = THREE.RepeatWrapping;
 packetMetal.wrapT = THREE.RepeatWrapping;
 
-const packetRoughness = new THREE.TextureLoader().load( "public/old/roughness.jpg" );
+const packetRoughness = new THREE.TextureLoader().load( "old/roughness.jpg" );
 packetRoughness.wrapS = THREE.RepeatWrapping;
 packetRoughness.wrapT = THREE.RepeatWrapping;
 
@@ -151,9 +150,6 @@ function onPointerDown( event ) {
         if (intersects[ i ].object === envelope) {
             onTapCard();
         }
-        
-		// intersects[ i ].object.material.color.set( 0xff0000 );
-
 	}
 
 }
