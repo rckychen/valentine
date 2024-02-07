@@ -19,9 +19,7 @@ export class Firework  {
                 Math.random() - 0.5,
                 Math.random() - 0.5,
             ).multiplyScalar(3);
-            let physicsObject = new Physics.Physics (this.startingPosition.clone(), randomDirection, 1);
-            console.log(physicsObject);
-            
+            let physicsObject = new Physics.Physics (this.startingPosition.clone(), randomDirection, 1);            
             let gravityVector = new THREE.Vector3(0, -1, 0);
             physicsObject.acceleration = gravityVector;
             this.physics.push(physicsObject); 

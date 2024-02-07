@@ -59,41 +59,21 @@ packetRoughness.wrapT = THREE.RepeatWrapping;
 const footballDiffuse = new THREE.TextureLoader().load("football/diffuse.png" );
 footballDiffuse.wrapS = THREE.RepeatWrapping;
 footballDiffuse.wrapT = THREE.RepeatWrapping;
-const footballNormal = new THREE.TextureLoader().load("football/normal.png" );
-footballNormal.wrapS = THREE.RepeatWrapping;
-footballNormal.wrapT = THREE.RepeatWrapping;
-const footballRoughness = new THREE.TextureLoader().load("football/roughness.png" );
-footballRoughness.wrapS = THREE.RepeatWrapping;
-footballRoughness.wrapT = THREE.RepeatWrapping;
-const footballAO = new THREE.TextureLoader().load("football/ao.png" );
-footballAO.wrapS = THREE.RepeatWrapping;
-footballAO.wrapT = THREE.RepeatWrapping;
 
 const footballMaterial = new THREE.MeshBasicMaterial( {
     color: 0xffffff, 
     side: THREE.DoubleSide,
     map: footballDiffuse,
-    // normalMap: footballNormal,
-    // roughnessMap: footballRoughness,
-    // aoMap: footballAO,
 })
 
 const objLoader = new OBJLoader().load("football/football.obj", onLoadFootball);
 var footballPrefab;
 function onLoadFootball (object) {
-    console.log(object);
     footballPrefab = new THREE.Mesh(object.children[0].geometry, footballMaterial);
     footballPrefab.position.set(0, 0, 1);
-    let footballScale = 0.05;
+    let footballScale = 0.03;
     footballPrefab.scale.set(footballScale,footballScale,footballScale);
-    // footballPrefab = object;
-    // scene.add(object);
 }
-
-// function handleLoadError (err) {
-//     console.log(err);
-// }
-
 
 const packetMaterial = new THREE.MeshStandardMaterial( {
     color: 0xffffff, 
@@ -143,9 +123,9 @@ var isAnimatingCard = false;
 var isOut = false;
 
 function createFirework () {
-    let offsetXY = new THREE.Vector2( scale * ( Math.random() - 0.5), Math.random() - 0.5);
+    let offsetXY = new THREE.Vector2( ( Math.random() - 0.5), Math.random() - 0.5);
     fireworks.push(new Firework.Firework (
-        new THREE.Vector3(offsetXY.x, offsetXY.y + 1.5 *  scale, -5), 
+        new THREE.Vector3(offsetXY.x, offsetXY.y + scale/2, 1), 
         scene, 
         particleMaterial
     ));
@@ -153,9 +133,9 @@ function createFirework () {
 }
 
 function createFootball () {
-    let offsetXY = new THREE.Vector2( scale * ( Math.random() - 0.5), Math.random() - 0.5);
+    let offsetXY = new THREE.Vector2(( Math.random() - 0.5), Math.random() - 0.5);
     fireworks.push(new Football.Football (
-        new THREE.Vector3(offsetXY.x, offsetXY.y + 1.5 *  scale, -5), 
+        new THREE.Vector3(offsetXY.x, offsetXY.y + scale/2, 1), 
         scene, 
         footballPrefab
     ));
@@ -165,14 +145,13 @@ function createFootball () {
 function onTapCard (event) {
     if (isOut) {
         let d = 0.1;
-        gsap.to(card.position, {z: 0, duration: d, ease: "power1.out"});
-        gsap.to(card.position, {z: -0.3, duration: d, ease: "power1.in", delay: d });
-        if (Math.random() > 0.1) {
-            createFirework();
-        }
-        else {
+        gsap.to(card.position, {z: -0.3, duration: d, ease: "power1.out"});
+        gsap.to(card.position, {z: -0.001, duration: d, ease: "power1.in", delay: d });
+        // createFootball();
+        if (Math.random() < 0.2) {
             createFootball();
         }
+        createFirework();
         
     }
     
@@ -232,7 +211,7 @@ function moveOut() {
 }
 
 function onPointerDown( event ) {
-    
+    // createFootball();
 	// calculate pointer position in normalized device coordinates
 	// (-1 to +1) for both components
     

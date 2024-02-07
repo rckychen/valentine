@@ -7,17 +7,26 @@ export class Football {
         this.clock = new THREE.Clock();
         this.scene = scene;
         this.startingPosition = startingPosition;
-        this.particleCount = 10;
+        this.particleCount = 5;
         this.physics = [];
         this.footballs = [];
         for (let i = 0; i < this.particleCount; i++ ){
             let randomDirection = new THREE.Vector3(
                 Math.random() - 0.5,
                 Math.random() - 0.5,
-                Math.random() - 0.5,
-            ).multiplyScalar(10);
+                (Math.random() - 0.5) * 0.2,
+            ).multiplyScalar(4);
+            let randomRotation = new THREE.Vector3(
+                Math.random() * 2 * Math.PI,
+                Math.random() * 2 * Math.PI,
+                Math.random() * 2 * Math.PI,
+            )
             let football = prefab.clone();
-            let gravityVector = new THREE.Vector3(0, -8, 0);
+            football.rotation.x = Math.random() * 2 * Math.PI;
+            football.rotation.y = Math.random() * 2 * Math.PI;
+            football.rotation.z = Math.random() * 2 * Math.PI;
+            
+            let gravityVector = new THREE.Vector3(0, -1, 0);
             let physics = new Physics.Physics (this.startingPosition.clone(), randomDirection, 1);
             physics.acceleration = gravityVector;
             this.physics.push(physics);
@@ -33,20 +42,8 @@ export class Football {
                 this.physics[i].position.y, 
                 this.physics[i].position.z,
             );
-            // var newDir = this.physics[i].velocity.clone();
-            var newDir = new THREE.Vector3(
-                -this.physics[i].velocity.x,
-                this.physics[i].velocity.z,
-                this.physics[i].velocity.y,
-            )
-            var pos = this.footballs[i].position.clone();
-            
-            pos.addVectors(newDir, this.physics[i].position);
-            this.footballs[i].lookAt(pos);
-            // let scale =(1 - (this.clock.getElapsedTime() / this.lifeSpan));
-            // this.footballs[i].scale.set(
-            //     scale,scale,scale
-            // )
+            let scale = 0.05 * Math.min( 2 * (this.clock.getElapsedTime() / this.lifeSpan), 1);
+            this.footballs[i].scale.set(scale, scale,scale);
 
         }
         if (this.clock.getElapsedTime() > this.lifeSpan) {
