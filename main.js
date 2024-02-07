@@ -16,13 +16,11 @@ document.body.appendChild( renderer.domElement );
 document.body.addEventListener('pointerdown', (event) => {
     onPointerDown(event);
 });
+const open = document.getElementById("open");
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 
-const geometryCube = new THREE.BoxGeometry( 1, 1, 1 );
-const materialCube = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometryCube, materialCube );
 const clock = new THREE.Clock();
 
 const fireworks = [];
@@ -37,7 +35,10 @@ const light2 = new THREE.DirectionalLight( 0xffffff, 50 );
 scene.add( light2 );
 
 let particleTexture = new THREE.TextureLoader().load( "particle.png" );
-let particleMaterial = new THREE.SpriteMaterial( { map: particleTexture } );
+let particleMaterial = new THREE.SpriteMaterial( { 
+    color: 0xFF1F00, 
+    map: particleTexture 
+} );
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
 const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
@@ -47,6 +48,14 @@ packetDiffuse.wrapT = THREE.RepeatWrapping;
 const packetBump = new THREE.TextureLoader().load( "old/bump.jpeg" );
 packetBump.wrapS = THREE.RepeatWrapping;
 packetBump.wrapT = THREE.RepeatWrapping;
+
+const noteDiffuse = new THREE.TextureLoader().load( "textures/note-diffuse.png" );
+noteDiffuse.wrapS = THREE.RepeatWrapping;
+noteDiffuse.wrapT = THREE.RepeatWrapping;
+
+const noteBump = new THREE.TextureLoader().load( "textures/note-bump.png" );
+noteBump.wrapS = THREE.RepeatWrapping;
+noteBump.wrapT = THREE.RepeatWrapping;
 
 const packetMetal = new THREE.TextureLoader().load( "old/metallic.jpg" );
 packetMetal.wrapS = THREE.RepeatWrapping;
@@ -86,7 +95,8 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
 const cardMaterial = new THREE.MeshStandardMaterial( {
     color: 0xffffff, 
     side: THREE.DoubleSide,
-    bumpMap: packetBump,
+    map: noteDiffuse,
+    // bumpMap: noteBump,
     metalness: 0,
     roughness: 1,
 });
@@ -169,6 +179,7 @@ function onTapEnvelope (event) {
 }
 
 function moveIn(){
+   
     if (isAnimatingEnvelope) return;
     isAnimatingEnvelope = true;
     gsap.to(envelope.position, {z: 0, duration: 0.1});
@@ -183,13 +194,23 @@ function moveIn(){
         duration: 0.5, 
         onComplete: () => {
             isOut = false;
-            isAnimatingEnvelope = false
+            isAnimatingEnvelope = false;
+            // gsap.to(open.style.opacity, {value: 1, duration: 0.2});
+            gsap.to(open, {
+                opacity: 1,
+              });
+            // open.style.display = "block";
         }
     });
 }
 
 function moveOut() {
     if (isAnimatingEnvelope) return;
+    // open.style.display = "none";
+    // gsap.to(open.style.opacity, {value: 0, duration: 0.2});
+    gsap.to(open, {
+        opacity: 0,
+      });
     isAnimatingEnvelope = true;
     gsap.to(envelope.position, {z: 0.2, duration: 0.2});
     envelope.position.set(0, 0, 0);
@@ -206,6 +227,8 @@ function moveOut() {
         onComplete: () => {
             isOut = true;
             isAnimatingEnvelope = false
+            
+            
         }
     });
 }
