@@ -3,11 +3,11 @@ import gsap from 'gsap';
 import * as Firework from '/firework.js';
 
 const ratio = 4096/2907;
-const scale = 4;
+const scale = 5;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 document.body.addEventListener('pointerdown', (event) => {
@@ -101,9 +101,9 @@ var isAnimatingCard = false;
 var isOut = false;
 
 function createFirework () {
-
+    let offsetXY = new THREE.Vector2( scale * ( Math.random() - 0.5), Math.random() - 0.5);
     fireworks.push(new Firework.Firework (
-        new THREE.Vector3(0, 1.5 *  scale, -5), 
+        new THREE.Vector3(offsetXY.x, offsetXY.y + 1.5 *  scale, -5), 
         scene, 
         particleMaterial
     ));
@@ -177,7 +177,7 @@ function onPointerDown( event ) {
     
 	// calculate pointer position in normalized device coordinates
 	// (-1 to +1) for both components
-    // createFirework();
+    
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
