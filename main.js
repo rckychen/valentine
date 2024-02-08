@@ -11,6 +11,8 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 const renderer = new THREE.WebGLRenderer({alpha: true});
+// renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 document.body.addEventListener('pointerdown', (event) => {
@@ -25,49 +27,31 @@ const clock = new THREE.Clock();
 
 const fireworks = [];
 
-const ambientLight = new THREE.AmbientLight( 0xffffff, 1.5 );
+const ambientLight = new THREE.AmbientLight( 0xffffff, 2 );
 scene.add( ambientLight );
 
-const light1 = new THREE.DirectionalLight( 0xffffff, 40 );
+const light1 = new THREE.DirectionalLight( 0xffffff, 60 );
 scene.add( light1 );
 
-const light2 = new THREE.DirectionalLight( 0xffffff, 50 );
+const light2 = new THREE.DirectionalLight( 0xffffff, 60 );
 scene.add( light2 );
 
 let particleTexture = new THREE.TextureLoader().load( "particle.png" );
 let particleMaterial = new THREE.SpriteMaterial( { 
-    color: 0xFF1F00, 
+    color: 0xFFFFFF, 
     map: particleTexture 
 } );
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
 const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
-packetDiffuse.wrapS = THREE.RepeatWrapping;
-packetDiffuse.wrapT = THREE.RepeatWrapping;
-
+packetDiffuse.colorSpace = THREE.SRGBColorSpace;
 const packetBump = new THREE.TextureLoader().load( "old/bump.jpeg" );
-packetBump.wrapS = THREE.RepeatWrapping;
-packetBump.wrapT = THREE.RepeatWrapping;
-
 const noteDiffuse = new THREE.TextureLoader().load( "textures/note-diffuse.png" );
-noteDiffuse.wrapS = THREE.RepeatWrapping;
-noteDiffuse.wrapT = THREE.RepeatWrapping;
-
 const noteBump = new THREE.TextureLoader().load( "textures/note-bump.png" );
-noteBump.wrapS = THREE.RepeatWrapping;
-noteBump.wrapT = THREE.RepeatWrapping;
-
 const packetMetal = new THREE.TextureLoader().load( "old/metallic.jpg" );
-packetMetal.wrapS = THREE.RepeatWrapping;
-packetMetal.wrapT = THREE.RepeatWrapping;
-
 const packetRoughness = new THREE.TextureLoader().load( "old/roughness.jpg" );
-packetRoughness.wrapS = THREE.RepeatWrapping;
-packetRoughness.wrapT = THREE.RepeatWrapping;
-
 const footballDiffuse = new THREE.TextureLoader().load("football/diffuse.png" );
-footballDiffuse.wrapS = THREE.RepeatWrapping;
-footballDiffuse.wrapT = THREE.RepeatWrapping;
+
 
 const footballMaterial = new THREE.MeshBasicMaterial( {
     color: 0xffffff, 
@@ -96,7 +80,7 @@ const cardMaterial = new THREE.MeshStandardMaterial( {
     color: 0xffffff, 
     side: THREE.DoubleSide,
     map: noteDiffuse,
-    // bumpMap: noteBump,
+    bumpMap: noteBump,
     metalness: 0,
     roughness: 1,
 });

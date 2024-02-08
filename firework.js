@@ -38,7 +38,7 @@ export class Firework  {
                 this.physics[i].position.y, 
                 this.physics[i].position.z,
             );
-            let sparkle = Math.sin(this.offsets[i] * this.clock.getElapsedTime() + this.offsets[i]);
+            let sparkle = Math.sin(2 * this.offsets[i] * this.clock.getElapsedTime() + this.offsets[i]);
             let scale = sparkle * particleScale * (1 - (this.clock.getElapsedTime() / this.lifeSpan));
             this.sprites[i].scale.set(
                 scale,scale,scale
