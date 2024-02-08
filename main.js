@@ -6,7 +6,7 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 
 const ratio = 4096/2907;
-const scale = 5;
+const scale = 5.5;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
@@ -37,10 +37,7 @@ const light2 = new THREE.DirectionalLight( 0xffffff, 60 );
 scene.add( light2 );
 
 let particleTexture = new THREE.TextureLoader().load( "particle.png" );
-let particleMaterial = new THREE.SpriteMaterial( { 
-    color: 0xFFFFFF, 
-    map: particleTexture 
-} );
+
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
 const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
@@ -74,6 +71,7 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
     map: packetDiffuse,
     bumpMap: packetBump,
     metalnessMap: packetMetal,
+    roughnessMap: packetRoughness,
 });
 
 const cardMaterial = new THREE.MeshStandardMaterial( {
@@ -119,9 +117,9 @@ var isOut = false;
 function createFirework () {
     let offsetXY = new THREE.Vector2( ( Math.random() - 0.5), Math.random() - 0.5);
     fireworks.push(new Firework.Firework (
-        new THREE.Vector3(offsetXY.x, offsetXY.y + scale/2, 1), 
+        new THREE.Vector3(offsetXY.x, offsetXY.y + scale/3, 1), 
         scene, 
-        particleMaterial
+        particleTexture
     ));
     
 }
@@ -129,7 +127,7 @@ function createFirework () {
 function createFootball () {
     let offsetXY = new THREE.Vector2(( Math.random() - 0.5), Math.random() - 0.5);
     fireworks.push(new Football.Football (
-        new THREE.Vector3(offsetXY.x, offsetXY.y + scale/2, 1), 
+        new THREE.Vector3(offsetXY.x, offsetXY.y + scale/3, 1), 
         scene, 
         footballPrefab
     ));

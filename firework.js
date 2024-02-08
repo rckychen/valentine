@@ -1,14 +1,15 @@
 import * as Physics from '/physics.js';
 import * as THREE from 'three';
 
-export const particleScale = 0.2;
+export const particleScale = 0.15;
 export class Firework  {
-    
-    constructor(startingPosition, scene, material) {
+    // TODO: Instanced mesh rendering if neccessary
+
+    constructor(startingPosition, scene, texture) {
         this.lifeSpan = 1.5;
         this.clock = new THREE.Clock();
         this.startingPosition = startingPosition;
-        this.particleCount = 50 + getRandomInt(20);
+        this.particleCount = 80 + getRandomInt(20);
         this.physics = [];
         this.sprites = [];
         this.offsets = [];
@@ -23,7 +24,13 @@ export class Firework  {
             let gravityVector = new THREE.Vector3(0, -1, 0);
             physicsObject.acceleration = gravityVector;
             this.physics.push(physicsObject); 
-            let sprite = new THREE.Sprite( material );
+            const color = new THREE.Color(`hsl(${getRandomInt(60)}, 100%, ${50 + getRandomInt(30)}%)`);
+
+            let particleMaterial = new THREE.SpriteMaterial( { 
+                color:  color, 
+                map: texture 
+            } );
+            let sprite = new THREE.Sprite( particleMaterial );
             this.sprites.push(sprite);
             this.offsets.push(10 * Math.random());
             scene.add( sprite );
@@ -48,6 +55,9 @@ export class Firework  {
             // }
         }
         if (this.clock.getElapsedTime() > this.lifeSpan) {
+            for (let i = 0; i < this.particleCount; i++) {
+                this.sprites[i].material.dispose();
+            }
             this.destroy();
         }
     }
