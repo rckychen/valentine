@@ -9,9 +9,15 @@ const ratio = 4096/2907;
 const scale = 5.5;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const cameraParent = new THREE.Object3D();
+// cameraParent.position.z = 5;
+// camera.position.set(0,0,5);
+camera.position.z = 5;
+cameraParent.attach(camera);
+// cameraParent.position.z = 0;
 
 const renderer = new THREE.WebGLRenderer({alpha: true});
-// renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+document.body.addEventListener("deviceorientation", handleOrientation, true);
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -27,28 +33,81 @@ const clock = new THREE.Clock();
 
 const fireworks = [];
 
-const ambientLight = new THREE.AmbientLight( 0xffffff, 2 );
+const ambientLight = new THREE.AmbientLight( 0xffffff, 1 );
 scene.add( ambientLight );
 
-const light1 = new THREE.DirectionalLight( 0xffffff, 60 );
+const light1 = new THREE.DirectionalLight( 0xffffff, 100 );
 scene.add( light1 );
 
-const light2 = new THREE.DirectionalLight( 0xffffff, 60 );
+const light2 = new THREE.DirectionalLight( 0xffffff, 100 );
 scene.add( light2 );
 
 let particleTexture = new THREE.TextureLoader().load( "particle.png" );
 
 
+
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
-const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
+// const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
+const packetDiffuse = new THREE.TextureLoader().load( "textures/diffuse.png" );
+const packetBump = new THREE.TextureLoader().load( "textures/bump.png" );
+
 packetDiffuse.colorSpace = THREE.SRGBColorSpace;
-const packetBump = new THREE.TextureLoader().load( "old/bump.jpeg" );
-const noteDiffuse = new THREE.TextureLoader().load( "textures/note-diffuse.png" );
+// const packetBump = new THREE.TextureLoader().load( "old/bump.jpeg" );
+var noteDiffuse ;
+var oldDiffuse = new THREE.TextureLoader().load( "textures/note-diffuse.png" );;
 const noteBump = new THREE.TextureLoader().load( "textures/note-bump.png" );
 const packetMetal = new THREE.TextureLoader().load( "old/metallic.jpg" );
 const packetRoughness = new THREE.TextureLoader().load( "old/roughness.jpg" );
 const footballDiffuse = new THREE.TextureLoader().load("football/diffuse.png" );
 
+var cardMaterial = new THREE.MeshStandardMaterial( {
+    color: 0xffffff, 
+    side: THREE.DoubleSide,
+    map: oldDiffuse,
+    bumpMap: noteBump,
+    metalness: 0,
+    roughness: 1,
+});
+const card = new THREE.Mesh( geometryPlane, cardMaterial );
+scene.add( card );
+card.position.z = -0.001;
+
+if(window.location.hash) {
+    console.log("hash", window.location.hash);
+    console.log(`textures/${window.location.hash.slice(1)}.png`);
+    noteDiffuse = new THREE.TextureLoader().load( `textures/${window.location.hash.slice(1)}.png`,
+    function () {
+        cardMaterial = new THREE.MeshStandardMaterial( {
+            color: 0xffffff, 
+            side: THREE.DoubleSide,
+            map: noteDiffuse,
+            bumpMap: noteBump,
+            metalness: 0,
+            roughness: 1,
+        });
+        card.material = cardMaterial;
+    },
+    undefined,
+    // onError callback
+    function () {
+        console.error( 'An error happened.' );
+        cardMaterial = new THREE.MeshStandardMaterial( {
+            color: 0xffffff, 
+            side: THREE.DoubleSide,
+            map: oldDiffuse,
+            bumpMap: noteBump,
+            metalness: 0,
+            roughness: 1,
+        });
+        card.material = cardMaterial;
+
+    });
+
+    
+    
+} else {
+
+}
 
 const footballMaterial = new THREE.MeshBasicMaterial( {
     color: 0xffffff, 
@@ -74,23 +133,12 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
     roughnessMap: packetRoughness,
 });
 
-const cardMaterial = new THREE.MeshStandardMaterial( {
-    color: 0xffffff, 
-    side: THREE.DoubleSide,
-    map: noteDiffuse,
-    bumpMap: noteBump,
-    metalness: 0,
-    roughness: 1,
-});
 
 const envelope = new THREE.Mesh( geometryPlane, packetMaterial );
 scene.add( envelope );
 
-const card = new THREE.Mesh( geometryPlane, cardMaterial );
-scene.add( card );
-card.position.z = -0.001;
 
-camera.position.z = 5;
+
 
 function animate() {
 	requestAnimationFrame( animate );
@@ -105,9 +153,26 @@ function animate() {
         firework.render(deltaTime);
     
     }
+    cameraParent.attach(camera);
+    // cameraParent.position.x += 0.05;
+    cameraParent.position.set(0,0,0);
+    // cameraParent.rotation.y += 0.05;
+    // camera.updateMatrixWorld();
+    // let worldPos;
     
 	renderer.render( scene, camera );
 }
+
+
+function handleOrientation(event) {
+    const absolute = event.absolute;
+    const alpha = event.alpha;
+    const beta = event.beta;
+    const gamma = event.gamma;
+    console.log(absolute, alpha, beta, gamma);
+    // Do stuff with the new orientation data
+  }
+
 
 var isAnimatingEnvelope = false;
 var isAnimatingCard = false;
@@ -115,6 +180,7 @@ var isAnimatingCard = false;
 var isOut = false;
 
 function createFirework () {
+    
     let offsetXY = new THREE.Vector2( ( Math.random() - 0.5), Math.random() - 0.5);
     fireworks.push(new Firework.Firework (
         new THREE.Vector3(offsetXY.x, offsetXY.y + scale/3, 1), 
@@ -249,5 +315,6 @@ function onWindowResize(){
     renderer.setSize( window.innerWidth, window.innerHeight );
 
 }
+
 
 animate();

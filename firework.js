@@ -9,7 +9,7 @@ export class Firework  {
         this.lifeSpan = 1.5;
         this.clock = new THREE.Clock();
         this.startingPosition = startingPosition;
-        this.particleCount = 80 + getRandomInt(20);
+        this.particleCount = 200 + getRandomInt(20);
         this.physics = [];
         this.sprites = [];
         this.offsets = [];
