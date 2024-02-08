@@ -68,6 +68,7 @@ var cardMaterial = new THREE.MeshStandardMaterial( {
     metalness: 0,
     roughness: 1,
 });
+cardMaterial.colorSpace = THREE.SRGBColorSpace;
 const card = new THREE.Mesh( geometryPlane, cardMaterial );
 scene.add( card );
 card.position.z = -0.001;
@@ -85,6 +86,9 @@ if(window.location.hash) {
             metalness: 0,
             roughness: 1,
         });
+        
+        cardMaterial.colorSpace = THREE.SRGBColorSpace;
+
         card.material = cardMaterial;
     },
     undefined,
@@ -99,6 +103,8 @@ if(window.location.hash) {
             metalness: 0,
             roughness: 1,
         });
+        cardMaterial.colorSpace = THREE.SRGBColorSpace;
+
         card.material = cardMaterial;
 
     });
