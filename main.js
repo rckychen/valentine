@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import * as Firework from '/firework.js';
 import * as Football from '/football.js'
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-
+import { DeviceOrientationControls } from  '/DeviceOrientationControls.js';
 
 const ratio = 4096/2907;
 const scale = 5.5;
@@ -17,12 +17,35 @@ cameraParent.attach(camera);
 // cameraParent.position.z = 0;
 
 const renderer = new THREE.WebGLRenderer({alpha: true});
-document.body.addEventListener("deviceorientation", handleOrientation, true);
+document.addEventListener("DOMContentLoaded", function() {
+
+    // document.body.addEventListener("deviceorientation", handleOrientation, true);
+    
+});
+
+var lastBeta;
+var lastAlpha;
+var lastGamma;
+
+var degtorad = Math.PI / 180;
+
+function deltaAngle (a1, a2) {
+    let diff = a1 - a2;
+    if (diff < -180) diff += 360;
+    if (diff > 180) diff -= 360;
+    return diff;
+}
+
 
 renderer.setSize( window.innerWidth, window.innerHeight );
+let controls;
+let fakeRotation = new THREE.Object3D();
+let fakeRotationLastFrame;
 document.body.appendChild( renderer.domElement );
-document.body.addEventListener('pointerdown', (event) => {
-    onPointerDown(event);
+document.body.addEventListener('pointerdown', (e) => {
+    controls = new DeviceOrientationControls(fakeRotation);
+    controls.connect();
+    onPointerDown(e);
 });
 const open = document.getElementById("open");
 
@@ -143,8 +166,7 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
 const envelope = new THREE.Mesh( geometryPlane, packetMaterial );
 scene.add( envelope );
 
-
-
+// let firstRotation;
 
 function animate() {
 	requestAnimationFrame( animate );
@@ -165,19 +187,39 @@ function animate() {
     // cameraParent.rotation.y += 0.05;
     // camera.updateMatrixWorld();
     // let worldPos;
+    if (controls){
+        
+        controls.update(); //updates fakerotation
+        if (fakeRotationLastFrame === undefined) {
+            fakeRotationLastFrame = fakeRotation.rotation.clone();
+        }
+        let dx = fakeRotation.rotation.x - fakeRotationLastFrame.x;
+        let dy = fakeRotation.rotation.y - fakeRotationLastFrame.y;
+        let dz = fakeRotation.rotation.z - fakeRotationLastFrame.z;
+        // if (dx != 0){
+        //     console.log(dx, dy, dz);
+        //     console.log(fakeRotationLastFrame, fakeRotation);
+
+        // }
+        // console.log(fakeRotation, fakeRotationLastFrame, dy);
+        // cameraParent.rotation.y -= dy;
+        if (Math.abs(dx) < 0.3) {
+            cameraParent.rotation.x -= dx / 5;
+        }
+        if (Math.abs(dy) < 0.3) {
+            cameraParent.rotation.y -= dy / 5;
+        }
+
+        if (Math.abs(dx) < 0.001 && Math.abs(dy) < 0.001) {
+            
+        }
+        fakeRotationLastFrame = fakeRotation.rotation.clone();
+    }cameraParent.quaternion.slerp(camera.quaternion, 0.1);
     
 	renderer.render( scene, camera );
 }
 
 
-function handleOrientation(event) {
-    const absolute = event.absolute;
-    const alpha = event.alpha;
-    const beta = event.beta;
-    const gamma = event.gamma;
-    console.log(absolute, alpha, beta, gamma);
-    // Do stuff with the new orientation data
-  }
 
 
 var isAnimatingEnvelope = false;

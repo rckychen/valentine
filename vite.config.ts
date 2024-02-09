@@ -1,7 +1,11 @@
-import basicSsl from '@vitejs/plugin-basic-ssl'
+import fs from 'fs';
+import { defineConfig } from 'vite';
 
-export default {
-  plugins: [
-    basicSsl()
-  ]
-}
+export default defineConfig({
+  server: {
+    https: {
+      key: fs.readFileSync('certificate/localhost.key'),
+      cert: fs.readFileSync('certificate/localhost.crt'),
+    }
+  }
+});
