@@ -154,6 +154,8 @@ function onLoadFootball (object) {
 
 const packetMaterial = new THREE.MeshStandardMaterial( {
     color: 0xffffff, 
+    transparent: true,
+    alphaMap: packetBump,
     side: THREE.DoubleSide,
     map: packetDiffuse,
     bumpMap: packetBump,
@@ -161,17 +163,24 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
     roughnessMap: packetRoughness,
 });
 
+const packetUnlit = new THREE.MeshBasicMaterial( {
+    side: THREE.DoubleSide,
+    map: packetDiffuse,
+})
+
 
 const envelope = new THREE.Mesh( geometryPlane, packetMaterial );
+const envelopeUnlit = new THREE.Mesh(geometryPlane, packetUnlit);
+envelope.add( envelopeUnlit );
 scene.add( envelope );
 const lightHolder = new THREE.Group();
 lightHolder.attach(light1);
 lightHolder.attach(light2);
 scene.add( lightHolder );
-// const envelopeHolder = new THREE.Group();
-// envelopeHolder.attach(envelope);
-// envelopeHolder.attach(card);
-// scene.add( envelopeHolder );
+const envelopeHolder = new THREE.Group();
+envelopeHolder.attach(envelope);
+envelopeHolder.attach(card);
+scene.add( envelopeHolder );
 
 // let firstRotation;
 
@@ -211,14 +220,18 @@ function animate() {
         // console.log(fakeRotation, fakeRotationLastFrame, dy);
         // cameraParent.rotation.y -= dy;
         if (Math.abs(dx) < 0.3) {
-            cameraParent.rotation.x -= dx / 5;
+            envelopeHolder.rotation.x += dx / 5;
+            lightHolder.rotation.x += dx / 10;
+
         }
         if (Math.abs(dy) < 0.3) {
-            cameraParent.rotation.y -= dy / 5;
+            envelopeHolder.rotation.y += dy / 5;
+            lightHolder.rotation.y += dy / 10;
+
         }
 
         if (Math.abs(dz) < 0.3) {
-            lightHolder.rotation.z -= dz ;
+            // lightHolder.rotation.z -= dz ;
         }
 
         if (Math.abs(dx) < 0.001 && Math.abs(dy) < 0.001) {
@@ -227,7 +240,7 @@ function animate() {
         fakeRotationLastFrame = fakeRotation.rotation.clone();
     }
     lightHolder.quaternion.slerp(camera.quaternion, 0.1);
-    cameraParent.quaternion.slerp(camera.quaternion, 0.1);
+    envelopeHolder.quaternion.slerp(camera.quaternion, 0.1);
     
 	renderer.render( scene, camera );
 }
