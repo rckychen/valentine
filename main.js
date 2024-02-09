@@ -52,6 +52,8 @@ let particleTexture = new THREE.TextureLoader().load( "particle.png" );
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
 const packetDiffuse = new THREE.TextureLoader().load( "textures/diffuse.png" );
+const packetAlpha = new THREE.TextureLoader().load( "textures/alpha.png" );
+
 const packetBump = new THREE.TextureLoader().load( "textures/bump.png" );
 
 packetDiffuse.colorSpace = THREE.SRGBColorSpace;
@@ -139,13 +141,16 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
 const packetUnlit = new THREE.MeshBasicMaterial( {
     side: THREE.DoubleSide,
     map: packetDiffuse,
+    alphaMap:packetAlpha,
+    alphaTest: 0.5
 })
-
 
 const envelope = new THREE.Mesh( geometryPlane, packetMaterial );
 const envelopeUnlit = new THREE.Mesh(geometryPlane, packetUnlit);
 envelope.add( envelopeUnlit );
 scene.add( envelope );
+envelope.scale.set(1.02, 1.02, 1.02);
+
 const lightHolder = new THREE.Group();
 lightHolder.attach(light1);
 lightHolder.attach(light2);
