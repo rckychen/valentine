@@ -82,13 +82,13 @@ const packetMetal = new THREE.TextureLoader().load( "old/metallic.jpg" );
 const packetRoughness = new THREE.TextureLoader().load( "old/roughness.jpg" );
 const footballDiffuse = new THREE.TextureLoader().load("football/diffuse.png" );
 
-var cardMaterial = new THREE.MeshStandardMaterial( {
+var cardMaterial = new THREE.MeshBasicMaterial( {
     color: 0xffffff, 
     side: THREE.DoubleSide,
     map: oldDiffuse,
-    bumpMap: noteBump,
-    metalness: 0,
-    roughness: 1,
+    // bumpMap: noteBump,
+    // metalness: 0,
+    // roughness: 1,
 });
 cardMaterial.colorSpace = THREE.SRGBColorSpace;
 const card = new THREE.Mesh( geometryPlane, cardMaterial );
@@ -100,13 +100,13 @@ if(window.location.hash) {
     console.log(`textures/${window.location.hash.slice(1)}.png`);
     noteDiffuse = new THREE.TextureLoader().load( `textures/${window.location.hash.slice(1)}.png`,
     function () {
-        cardMaterial = new THREE.MeshStandardMaterial( {
+        cardMaterial = new THREE.MeshBasicMaterial( {
             color: 0xffffff, 
             side: THREE.DoubleSide,
             map: noteDiffuse,
-            bumpMap: noteBump,
-            metalness: 0,
-            roughness: 1,
+            // bumpMap: noteBump,
+            // metalness: 0,
+            // roughness: 1,
         });
         
         cardMaterial.colorSpace = THREE.SRGBColorSpace;
@@ -121,9 +121,9 @@ if(window.location.hash) {
             color: 0xffffff, 
             side: THREE.DoubleSide,
             map: oldDiffuse,
-            bumpMap: noteBump,
-            metalness: 0,
-            roughness: 1,
+            // bumpMap: noteBump,
+            // metalness: 0,
+            // roughness: 1,
         });
         cardMaterial.colorSpace = THREE.SRGBColorSpace;
 
@@ -220,13 +220,13 @@ function animate() {
         // console.log(fakeRotation, fakeRotationLastFrame, dy);
         // cameraParent.rotation.y -= dy;
         if (Math.abs(dx) < 0.3) {
-            envelopeHolder.rotation.x += dx / 5;
-            lightHolder.rotation.x += dx / 10;
+            envelopeHolder.rotation.x += dx / 8;
+            lightHolder.rotation.x += dx / 3;
 
         }
         if (Math.abs(dy) < 0.3) {
-            envelopeHolder.rotation.y += dy / 5;
-            lightHolder.rotation.y += dy / 10;
+            envelopeHolder.rotation.y += dy / 8;
+            lightHolder.rotation.y += dy / 3;
 
         }
 
