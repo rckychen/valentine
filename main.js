@@ -42,9 +42,8 @@ let controls;
 let fakeRotation = new THREE.Object3D();
 let fakeRotationLastFrame;
 document.body.appendChild( renderer.domElement );
-document.body.addEventListener('pointerdown', (e) => {
+document.body.addEventListener('click', (e) => {
     controls = new DeviceOrientationControls(fakeRotation);
-    controls.connect();
     onPointerDown(e);
 });
 const open = document.getElementById("open");
