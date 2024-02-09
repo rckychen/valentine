@@ -10,32 +10,11 @@ const scale = 5.5;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const cameraParent = new THREE.Object3D();
-// cameraParent.position.z = 5;
-// camera.position.set(0,0,5);
+
 camera.position.z = 5;
 cameraParent.attach(camera);
-// cameraParent.position.z = 0;
 
 const renderer = new THREE.WebGLRenderer({alpha: true});
-document.addEventListener("DOMContentLoaded", function() {
-
-    // document.body.addEventListener("deviceorientation", handleOrientation, true);
-    
-});
-
-var lastBeta;
-var lastAlpha;
-var lastGamma;
-
-var degtorad = Math.PI / 180;
-
-function deltaAngle (a1, a2) {
-    let diff = a1 - a2;
-    if (diff < -180) diff += 360;
-    if (diff > 180) diff -= 360;
-    return diff;
-}
-
 
 renderer.setSize( window.innerWidth, window.innerHeight );
 let controls;
@@ -43,10 +22,11 @@ let fakeRotation = new THREE.Object3D();
 let fakeRotationLastFrame;
 document.body.appendChild( renderer.domElement );
 document.body.addEventListener('click', (e) => {
-    controls = new DeviceOrientationControls(fakeRotation);
+    
     onPointerDown(e);
 });
 const open = document.getElementById("open");
+const modal = document.getElementById("permission");
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -69,12 +49,10 @@ let particleTexture = new THREE.TextureLoader().load( "particle.png" );
 
 
 const geometryPlane = new THREE.PlaneGeometry(  scale / ratio, scale );
-// const packetDiffuse = new THREE.TextureLoader().load( "old/diffuse.jpg" );
 const packetDiffuse = new THREE.TextureLoader().load( "textures/diffuse.png" );
 const packetBump = new THREE.TextureLoader().load( "textures/bump.png" );
 
 packetDiffuse.colorSpace = THREE.SRGBColorSpace;
-// const packetBump = new THREE.TextureLoader().load( "old/bump.jpeg" );
 var noteDiffuse ;
 var oldDiffuse = new THREE.TextureLoader().load( "textures/note-diffuse.png" );;
 const noteBump = new THREE.TextureLoader().load( "textures/note-bump.png" );
@@ -86,9 +64,6 @@ var cardMaterial = new THREE.MeshBasicMaterial( {
     color: 0xffffff, 
     side: THREE.DoubleSide,
     map: oldDiffuse,
-    // bumpMap: noteBump,
-    // metalness: 0,
-    // roughness: 1,
 });
 cardMaterial.colorSpace = THREE.SRGBColorSpace;
 const card = new THREE.Mesh( geometryPlane, cardMaterial );
@@ -104,9 +79,7 @@ if(window.location.hash) {
             color: 0xffffff, 
             side: THREE.DoubleSide,
             map: noteDiffuse,
-            // bumpMap: noteBump,
-            // metalness: 0,
-            // roughness: 1,
+
         });
         
         cardMaterial.colorSpace = THREE.SRGBColorSpace;
@@ -121,9 +94,7 @@ if(window.location.hash) {
             color: 0xffffff, 
             side: THREE.DoubleSide,
             map: oldDiffuse,
-            // bumpMap: noteBump,
-            // metalness: 0,
-            // roughness: 1,
+
         });
         cardMaterial.colorSpace = THREE.SRGBColorSpace;
 
@@ -182,7 +153,6 @@ envelopeHolder.attach(envelope);
 envelopeHolder.attach(card);
 scene.add( envelopeHolder );
 
-// let firstRotation;
 
 function animate() {
 	requestAnimationFrame( animate );
@@ -198,11 +168,8 @@ function animate() {
     
     }
     cameraParent.attach(camera);
-    // cameraParent.position.x += 0.05;
     cameraParent.position.set(0,0,0);
-    // cameraParent.rotation.y += 0.05;
-    // camera.updateMatrixWorld();
-    // let worldPos;
+
     if (controls){
         
         controls.update(); //updates fakerotation
@@ -212,13 +179,7 @@ function animate() {
         let dx = fakeRotation.rotation.x - fakeRotationLastFrame.x;
         let dy = fakeRotation.rotation.y - fakeRotationLastFrame.y;
         let dz = fakeRotation.rotation.z - fakeRotationLastFrame.z;
-        // if (dx != 0){
-        //     console.log(dx, dy, dz);
-        //     console.log(fakeRotationLastFrame, fakeRotation);
 
-        // }
-        // console.log(fakeRotation, fakeRotationLastFrame, dy);
-        // cameraParent.rotation.y -= dy;
         if (Math.abs(dx) < 0.3) {
             envelopeHolder.rotation.x += dx / 8;
             lightHolder.rotation.x += dx / 3;
@@ -230,13 +191,6 @@ function animate() {
 
         }
 
-        if (Math.abs(dz) < 0.3) {
-            // lightHolder.rotation.z -= dz ;
-        }
-
-        if (Math.abs(dx) < 0.001 && Math.abs(dy) < 0.001) {
-            
-        }
         fakeRotationLastFrame = fakeRotation.rotation.clone();
     }
     lightHolder.quaternion.slerp(camera.quaternion, 0.1);
@@ -244,9 +198,6 @@ function animate() {
     
 	renderer.render( scene, camera );
 }
-
-
-
 
 var isAnimatingEnvelope = false;
 var isAnimatingCard = false;
@@ -283,11 +234,8 @@ function onTapCard (event) {
         if (Math.random() < 0.2) {
             createFootball();
         }
-        createFirework();
-        
+        createFirework();     
     }
-    
-    
 }
 
 function onTapEnvelope (event) {
@@ -317,19 +265,15 @@ function moveIn(){
         onComplete: () => {
             isOut = false;
             isAnimatingEnvelope = false;
-            // gsap.to(open.style.opacity, {value: 1, duration: 0.2});
             gsap.to(open, {
                 opacity: 1,
               });
-            // open.style.display = "block";
         }
     });
 }
 
 function moveOut() {
     if (isAnimatingEnvelope) return;
-    // open.style.display = "none";
-    // gsap.to(open.style.opacity, {value: 0, duration: 0.2});
     gsap.to(open, {
         opacity: 0,
       });
@@ -345,7 +289,6 @@ function moveOut() {
         y: -scale * 6/8, 
         delay: 0.2,
         duration: 1, 
-        // ease: "power1.in", 
         onComplete: () => {
             isOut = true;
             isAnimatingEnvelope = false
@@ -355,10 +298,22 @@ function moveOut() {
     });
 }
 
+var firstTap = false;
 function onPointerDown( event ) {
-    // createFootball();
-	// calculate pointer position in normalized device coordinates
-	// (-1 to +1) for both components
+    if (!firstTap){
+        firstTap = true;
+        gsap.to(modal, {
+            opacity: 0,
+            duration: 0.3
+        })
+        gsap.to(open, {
+            opacity: 1,
+            duration: 1
+        })
+        controls = new DeviceOrientationControls(fakeRotation);
+        return;
+    }
+    
     
 	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
