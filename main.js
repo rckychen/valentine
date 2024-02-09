@@ -25,6 +25,8 @@ document.body.addEventListener('click', (e) => {
     
     onPointerDown(e);
 });
+const background = document.getElementById("body");
+
 const open = document.getElementById("open");
 const modal = document.getElementById("permission");
 
@@ -248,10 +250,19 @@ function onTapEnvelope (event) {
     
 }
 
+let b1 = 'linear-gradient(#210000 0%, #270000 100%)';
+let b2 = 'linear-gradient(#500 0%, #190000 100%)';
+
 function moveIn(){
    
     if (isAnimatingEnvelope) return;
     isAnimatingEnvelope = true;
+    gsap.set(background, {
+        background: b1
+    })
+    gsap.to(background, {
+        background: b2
+    })
     gsap.to(envelope.position, {z: 0, duration: 0.1});
     gsap.to(card.position, {
         y: 0,
@@ -278,6 +289,12 @@ function moveOut() {
         opacity: 0,
       });
     isAnimatingEnvelope = true;
+    gsap.set(background, {
+        background: b2
+    })
+    gsap.to(background, {
+        background: b1
+    })
     gsap.to(envelope.position, {z: 0.2, duration: 0.2});
     envelope.position.set(0, 0, 0);
     gsap.to(card.position, {
@@ -293,7 +310,7 @@ function moveOut() {
             isOut = true;
             isAnimatingEnvelope = false
             
-            
+            createFirework();
         }
     });
 }
