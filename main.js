@@ -165,6 +165,14 @@ const packetMaterial = new THREE.MeshStandardMaterial( {
 
 const envelope = new THREE.Mesh( geometryPlane, packetMaterial );
 scene.add( envelope );
+const lightHolder = new THREE.Group();
+lightHolder.attach(light1);
+lightHolder.attach(light2);
+scene.add( lightHolder );
+// const envelopeHolder = new THREE.Group();
+// envelopeHolder.attach(envelope);
+// envelopeHolder.attach(card);
+// scene.add( envelopeHolder );
 
 // let firstRotation;
 
@@ -210,11 +218,17 @@ function animate() {
             cameraParent.rotation.y -= dy / 5;
         }
 
+        if (Math.abs(dz) < 0.3) {
+            lightHolder.rotation.z -= dz ;
+        }
+
         if (Math.abs(dx) < 0.001 && Math.abs(dy) < 0.001) {
             
         }
         fakeRotationLastFrame = fakeRotation.rotation.clone();
-    }cameraParent.quaternion.slerp(camera.quaternion, 0.1);
+    }
+    lightHolder.quaternion.slerp(camera.quaternion, 0.1);
+    cameraParent.quaternion.slerp(camera.quaternion, 0.1);
     
 	renderer.render( scene, camera );
 }
