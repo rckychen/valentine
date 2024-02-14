@@ -37,13 +37,14 @@ const clock = new THREE.Clock();
 
 const fireworks = [];
 
-const ambientLight = new THREE.AmbientLight( 0xffffff, 1 );
+
+const ambientLight = new THREE.AmbientLight( 0xff64b9, 1 );
 scene.add( ambientLight );
 
-const light1 = new THREE.DirectionalLight( 0xffffff, 100 );
+const light1 = new THREE.DirectionalLight( 0xff64b9, 100 );
 scene.add( light1 );
 
-const light2 = new THREE.DirectionalLight( 0xffffff, 100 );
+const light2 = new THREE.DirectionalLight( 0xff64b9, 100 );
 scene.add( light2 );
 
 let particleTexture = new THREE.TextureLoader().load( "particle.png" );
